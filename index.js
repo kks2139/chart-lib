@@ -25,7 +25,10 @@ class MyChart{
         this.xLabel = xLabel;
         this.datas = datas;
         // 계산된 x, y축 라벨 좌표
-        this.yLabelPos = {};
+        this.yLabelPos = {
+            baseLine: 0,
+            interval: 0
+        };
         this.xLabelPos = [];
         
         this.drwaChart();
@@ -43,7 +46,7 @@ class MyChart{
         ctx.lineTo(xLength, yLength);
         ctx.stroke();
 
-        this.yLabelPos.baseLine = PADDING_Y + yLength;
+        this.yLabelPos.baseLine = yLength;
 
         // y축 라벨링
         ctx.font = '20px bold';
@@ -52,6 +55,7 @@ class MyChart{
             const interval = Math.floor(yLength / arr.length - 3) * i;
             const yPos = yLength - interval;
             ctx.fillText(d, PADDING_X - 10, yPos);
+            if(i === 1) this.yLabelPos.interval = interval;
         });
 
         // x축 라벨링
@@ -67,11 +71,14 @@ class MyChart{
 
     setData = ()=>{
         const {ctx, datas, xLabelPos, yLabelPos} = this;
+        const {baseLine, interval} = yLabelPos;
 
         ctx.fillStyle = 'yellow';
         datas.forEach((d, i) =>{
+            const value = baseLine - (d * interval / 10);
+
             ctx.beginPath();
-            ctx.arc(xLabelPos[i], 300, 5, 0, 2 * Math.PI);
+            ctx.arc(xLabelPos[i], value, 5, 0, 2 * Math.PI);
             ctx.fill();
             ctx.stroke();
         });
